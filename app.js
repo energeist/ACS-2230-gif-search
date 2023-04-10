@@ -1,8 +1,7 @@
-require('dotenv').config()
-const handlebars = require('express-handlebars');
-
 // Require Libraries
+require('dotenv').config()
 const express = require('express');
+const handlebars = require('express-handlebars');
 
 // Require tenorjs near the top of the file
 const Tenor = require("tenorjs").client({
@@ -37,7 +36,6 @@ app.get('/', (req, res) => {
   term = ""
   if (req.query.term) {
     term = req.query.term
-  }
   // Tenor.search.Query("SEARCH KEYWORD HERE", "LIMIT HERE")
   Tenor.Search.Query(term, "10")
     .then(response => {
@@ -46,6 +44,27 @@ app.get('/', (req, res) => {
       // pass the gifs as an object into the home page
       res.render('home', { gifs })
     }).catch(console.error);
+  } else {
+    res.render('home', { gifs: [] })
+  } 
+})
+
+app.get('/http', (req, res) => {
+  // Handle the home page when we haven't queried yet
+  term = ""
+  if (req.query.term) {
+    term = req.query.term
+  // Tenor.search.Query("SEARCH KEYWORD HERE", "LIMIT HERE")
+  Tenor.Search.Query(term, "10")
+    .then(response => {
+      // store the gifs we get back from the search
+      const gifs = response;
+      // pass the gifs as an object into the home page
+      res.render('home', { gifs })
+    }).catch(console.error);
+  } else {
+    res.render('httpApi', { gifs: [] })
+  } 
 })
 
 app.get('/greetings/:name', (req, res) => {
